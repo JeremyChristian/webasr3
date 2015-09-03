@@ -1,0 +1,172 @@
+{% extends 'rest_framework/api.html' %} 
+{% block content %}
+<body>
+<script>
+var i = 1
+	function addFile() {
+		i = i + 1
+		var string = '\
+		<div class="form-group">\
+			<label class="col-sm-2 control-label ">File</label>\
+			<div class="col-sm-10">\
+				<input name="file$"  type="file">\
+			</div>\
+		</div>';
+		string = string.replace('$',i.toString())
+		document.getElementById("bah").innerHTML += string
+	}
+		
+</script>
+
+
+
+<form action="/newupload" method="POST" enctype="multipart/form-data" class="form-horizontal well" novalidate>
+
+	<fieldset>
+
+		<input type='hidden' name='csrfmiddlewaretoken' value='wSN8D5j2pFr0YyuzU7wJFGkb5gck9G5j'/>    
+
+		<div id='bah'>
+
+			<div class="form-group">
+
+				<label class="col-sm-2 control-label ">File</label>
+
+				<div class="col-sm-10">
+
+					<input name="file1"  type="file">
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="form-group">
+
+			<input class="btn btn-primary" type="button" id="addfile" onclick="addFile();" value="Add File" />
+
+		</div>
+
+        <div class="form-group">
+
+    		<label class="col-sm-2 control-label ">Language</label>
+
+    		<div class="col-sm-10">
+
+        		<select class="form-control" name="language">
+        
+		            {% for language in languages %}
+
+		            	<option value="{{language}}" >{{language}}</option>
+		        			
+		        	{% endfor %}
+        
+        		</select>
+        	</div>
+		</div>
+    
+        <div class="form-group">
+    
+    	    <label class="col-sm-2 control-label ">Systems</label>
+    
+		    <div class="col-sm-10">
+
+        		<select class="form-control" name="systems">
+        		
+					{% for system in systems %}
+
+            			<option value="{{system}}" >{{system}}</option>
+        			
+        			{% endfor %}
+
+        		</select>
+		        
+		   	</div>
+		</div>
+
+        <div class="form-group">
+    
+        	<label class="col-sm-2 control-label ">Environment</label>
+    
+    		<div class="col-sm-10">
+        
+        		<select class="form-control" name="environment">
+		        
+        			{% for environment in environments %}
+
+            			<option value="{{environment}}" >{{environment}}</option>
+        			
+        			{% endfor %}
+        
+        		</select>
+        
+    		</div>
+
+		</div>
+		
+		<div class="form-group ">
+    
+	        <label class="col-sm-2 control-label ">Metadata</label>
+    
+   			<div class="col-sm-10">
+        		
+        		<input name="metadata"  type="file">
+        
+    		</div>
+
+		</div>
+
+		<div class="form-actions">
+			
+			<button class="btn btn-primary" title="Upload User Audio to WebASR">Upload</button>
+													
+		</div>
+												
+	</fieldset>
+										
+</form>
+
+<table class="table table-hover well" style='border:20px;'>
+
+  <thead style='border:20px;'>
+
+    <tr style='border:20px;'>
+
+      <td>Created</td>
+      <td>Audiofiles</td>
+      <td>Language</td>
+      <td>Environment</td>
+      <td>Metadata</td>
+      <td>Transcripts</td>
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+  {% for upload, audio in uploads %}
+
+    <tr class = "info">
+
+      <td style="width: 25%">{{upload.created}}</td>
+      <td style="width: 25%">
+	      {% for file in audio %}
+	      	{{file.audiofile}}<br>
+	      {% endfor %}
+      </td>
+      <td style="width: 25%">{{upload.language}}</td>
+      <td style="width: 25%">{{upload.environment}}</td>
+      <td style="width: 25%">{{upload.metadata}}</td>
+      <td style="width: 25%">{{upload.transcripts}}</td>
+    </tr>
+
+  {% endfor %} 
+
+  </tbody>
+
+</table>
+
+</body>			
+
+{% endblock %}

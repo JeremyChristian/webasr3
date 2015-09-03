@@ -1,0 +1,36 @@
+{% extends 'rest_framework/api.html' %} 
+{% block content %}
+
+<table class="table table-hover table-fixed">
+        <thead>
+            <tr style='padding:5px;'>
+              <td>Email</td>
+              <td>Forename</td>
+              <td>Surname</td>
+              <td>Staff</td>
+              <td>Active</td>
+            </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- {% for x in somedata %} -->
+
+            <tr style='padding:5px;' class = "info">
+              <td style="width: 20%">{{x.email}}</td>
+              <td style="width: 20%">{{x.first_name}}</td>
+              <td style="width: 20%">{{x.last_name}}</td>
+              <td style="width: 20%">{{x.is_staff}}</td>
+              <td style="width: 20%">{{x.is_active}}</td>
+            </tr>
+
+        <!--   {% endfor %} -->
+
+        </tbody>
+      </table>
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'rest_framework/api.html' %} 
+{% block content %}
+<body>
+
+
+<form action="/systems" method="POST" enctype="multipart/form-data" class="form-horizontal well" novalidate>
+
+  <fieldset>
+
+    <input type='hidden' name='csrfmiddlewaretoken' value='wSN8D5j2pFr0YyuzU7wJFGkb5gck9G5j'/>    
+
+
+        <div class="form-group">
+
+        <label class="col-sm-2 control-label ">Name</label>
+
+        <div class="col-sm-10">
+
+            <input class="form-control" name="name" type='text'>
+
+          </div>
+    </div>
+    
+        <div class="form-group">
+    
+          <label class="col-sm-2 control-label ">Language</label>
+    
+        <div class="col-sm-10">
+
+            <input class="form-control" name="language" type='text'>
+            
+        </div>
+    </div>
+
+        <div class="form-group">
+    
+          <label class="col-sm-2 control-label ">Environment</label>
+    
+        <div class="col-sm-10">
+        
+            <input class="form-control" name="environment" type='text'>
+        
+        </div>
+
+    </div>
+    
+    <div class="form-group ">
+    
+          <label class="col-sm-2 control-label ">command</label>
+    
+        <div class="col-sm-10">
+            
+            <input class="form-control" name="command"  type="text">
+        
+        </div>
+
+    </div>
+
+    <div class="form-actions">
+      
+      <button class="btn btn-primary" title="Upload System to WebASR">Create</button>
+                          
+    </div>
+                        
+  </fieldset>
+                    
+</form>
+
+<table class="table table-hover well" style='border:20px;'>
+
+  <thead style='border:20px;'>
+
+    <tr style='border:20px;'>
+
+      <td>Created</td>
+      <td>Name</td>
+      <td>Language</td>
+      <td>Environment</td>
+      <td>Command</td>
+
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+  {% for system in systemlist %}
+
+    <tr class = "info">
+
+      <td style="width: 25%">{{system.added}}</td>
+      <td style="width: 25%">{{system.name}}</td>
+      <td style="width: 25%">{{system.language}}</td>
+      <td style="width: 25%">{{system.environment}}</td>
+      <td style="width: 25%">{{system.command}}</td>
+      
+    </tr>
+
+  {% endfor %} 
+
+  </tbody>
+
+</table>
+
+</body>     
+
+{% endblock %}

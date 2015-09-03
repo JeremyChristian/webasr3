@@ -1,0 +1,274 @@
+{% extends "rest_framework/base.html" %}
+{% load url from future %}
+{% load staticfiles %}
+{% load rest_framework %}
+<!DOCTYPE html>
+<html>
+	<head>
+		
+		{% block head %}
+
+			{% block meta %}
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta name="robots" content="NONE,NOARCHIVE" />
+			{% endblock %}
+
+			<title>{% block title %}WebASR{% endblock %}</title>
+
+			{% block style %}
+				{% block bootstrap_theme %}
+					<link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap.min.css" %}"/>
+				{% endblock %}
+				<link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
+				<link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
+				
+				<link rel="stylesheet" href="{% static "frontend/stylesheet.css" %}">
+				<link rel="stylesheet" href="{% static "nictitate/style.css" %}">
+			{% endblock %}
+
+		{% endblock %}
+	</head>
+
+	
+
+
+
+
+	{% block body %}
+	<body class="{% block bodyclass %}{% endblock %}">
+
+		<div class="container" id="page-shadow">
+			<div id="content"> 
+			{% block navbar %}
+				<header id="page-header">
+                <div id="header-bottom" class="cbp-af-header">
+                    <div class="wrapper">
+                        <div class="row-fluid">
+                            <div class="span12 clearfix">
+                                <!--logo-image-->
+                                <nav id="main-nav">
+                                    <ul id="main-menu" class="clearfix sf-js-enabled sf-arrows">
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/account" data-description=""><i data-icon=""></i><span>Account</span></a></li>
+<li id="menu-item-69" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/systems" data-description=""><i data-icon=""></i><span>Systems</span></a></li>
+<li id="menu-item-70" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/users" data-description=""><i data-icon=""></i><span>Users</span></a></li>
+
+<li id="menu-item-429" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/newupload" data-description=""><i data-icon=""></i><span>Uploads</span></a></li>
+</ul><div id="mobile-menu" class="menu-menu-1-container"><span>Menu</span><ul id="toggle-view-menu">
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68 clearfix"><h3><a href="/account">Account</a></h3></li>
+<li id="menu-item-69" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-69 clearfix"><h3><a href="/systems">Systems</a></h3></li>
+<li id="menu-item-70" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-70 clearfix"><h3><a href="/users">Users</a></h3></li>
+<li id="menu-item-429" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-429 clearfix"><h3><a href="/newupload">Uploads</a></h3></li>
+</ul></div>                                </nav><!--main-nav-->
+                            </div><!--span12-->
+                        </div><!--row-fluid-->
+                    </div><!--wrapper-->
+                </div><!--header-bottom-->
+			{% endblock %}
+
+			<div class="container">
+			{% block breadcrumbs %}
+				<!-- <ul class="breadcrumb">
+					{% for breadcrumb_name, breadcrumb_url in breadcrumblist %}
+						{% if forloop.last %}
+							<li class="active"><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+						{% else %}
+							<li><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+						{% endif %}
+					{% endfor %}
+				</ul> -->
+			{% endblock %}
+
+			<!-- Content -->
+			<div id="content" style='height:100%;'>
+
+				<div class="row-fluid" >
+
+						<!-- <div class="col-md-2">
+
+							<div >
+
+								<a href="/newupload" class="list-group-item active"> New Upload</a>
+								<a href="/uploads" class="list-group-item"> Previous Uploads</a>
+								<a href="/users" class="list-group-item "> Users</a>
+								<a href="/systems" class="list-group-item"> Systems</a>
+								<a href="/signup" class="list-group-item"> Signup</a>	
+
+							</div>
+
+							<div >
+
+								<a href="#" class="list-group-item">About Us</a>
+								<a href="#" class="list-group-item">Conditions of Use</a>
+								<a href="#" class="list-group-item">Supporting Projects</a>
+								<a href="#" class="list-group-item">Research Software</a>
+								<a href="#" class="list-group-item">Publications</a>
+								<a href="#" class="list-group-item">Systems</a>
+								<a href="#" class="list-group-item">FAQ</a>
+
+							</div>
+
+						</div> -->
+
+						<div class="col-md-12" style='height:100%;'>
+							
+							{% block content %}
+										{% endblock %}		
+							
+								{% if paginator %}
+									<nav style="float: right">
+									{% get_pagination_html paginator %}
+									</nav>
+								{% endif %}
+
+							
+
+				{% if display_edit_forms %}
+
+					{% if post_form  %}
+						<div {% if post_form %}class="tabbable"{% endif %}>
+							{% if post_form %}
+								<ul class="nav nav-tabs form-switcher">
+									<li>
+										<a name='html-tab' href="#post-object-form" data-toggle="tab">HTML form</a>
+									</li>
+									
+								</ul>
+							{% endif %}
+							<div class="well tab-content">
+								{% if post_form %}
+									<div class="tab-pane" id="post-object-form">
+										{% with form=post_form %}
+											<form action="{{ request.get_full_path }}"
+												  method="POST" enctype="multipart/form-data" class="form-horizontal" novalidate>
+												<fieldset>
+													{{ post_form }}
+													<div class="form-actions">
+														<button class="btn btn-primary"
+																title="Make a POST request on the {{ name }} resource">POST</button>
+													</div>
+												</fieldset>
+											</form>
+										{% endwith %}
+									</div>
+								{% endif %}
+								<div {% if post_form %}class="tab-pane"{% endif %} id="post-generic-content-form">
+									{% with form=raw_data_post_form %}
+										<form action="{{ request.get_full_path }}" method="POST" class="form-horizontal">
+											<fieldset>
+												{% include "rest_framework/raw_data_form.html" %}
+												<div class="form-actions">
+													<button class="btn btn-primary"
+															title="Make a POST request on the {{ name }} resource">POST</button>
+												</div>
+											</fieldset>
+										</form>
+									{% endwith %}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+
+					{% if put_form or raw_data_put_form or raw_data_patch_form %}
+						<div {% if put_form %}class="tabbable"{% endif %}>
+							{% if put_form %}
+								<ul class="nav nav-tabs form-switcher">
+									<li>
+										<a name='html-tab' href="#put-object-form" data-toggle="tab">HTML form</a>
+									</li>
+									<li>
+										<a  name='raw-tab' href="#put-generic-content-form" data-toggle="tab">Raw data</a>
+									</li>
+								</ul>
+							{% endif %}
+							<div class="well tab-content">
+								{% if put_form %}
+									<div class="tab-pane" id="put-object-form">
+										<form action="{{ request.get_full_path }}"
+											  method="POST" enctype="multipart/form-data" class="form-horizontal" novalidate>
+											<fieldset>
+												{{ put_form }}
+												<div class="form-actions">
+													<button class="btn btn-primary js-tooltip"
+															 name="{{ api_settings.FORM_METHOD_OVERRIDE }}"
+															value="PUT" title="Make a PUT request on the {{ name }} resource">PUT</button>
+												</div>
+											</fieldset>
+										</form>
+									</div>
+								{% endif %}
+								<div {% if put_form %}class="tab-pane"{% endif %} id="put-generic-content-form">
+									{% with form=raw_data_put_or_patch_form %}
+										<form action="{{ request.get_full_path }}" method="POST" class="form-horizontal">
+											<fieldset>
+												{% include "rest_framework/raw_data_form.html" %}
+												<div class="form-actions">
+													{% if raw_data_put_form %}
+														<button class="btn btn-primary js-tooltip"
+																 name="{{ api_settings.FORM_METHOD_OVERRIDE }}"
+																value="PUT" title="Make a PUT request on the {{ name }} resource">PUT</button>
+													{% endif %}
+													{% if raw_data_patch_form %}
+														<button class="btn btn-primary js-tooltip"
+																 name="{{ api_settings.FORM_METHOD_OVERRIDE }}"
+																value="PATCH" title="Make a PATCH request on the {{ name }} resource">PATCH</button>
+													{% endif %}
+												</div>
+											</fieldset>
+										</form>
+									{% endwith %}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+				{% endif %}
+			</div>
+			</div>
+			</div>
+
+					</div>
+			<!-- END Content -->
+			</div><!-- /.container -->
+			<div id="info">
+
+				<a href="http://www.shef.ac.uk">
+
+					<img src="{% static "frontend/UOS.gif" %}" alt="The University of Sheffield">
+
+				</a>
+
+				<a href="http://spandh.dcs.shef.ac.uk">
+
+					<img src="{% static "frontend/SPaH.gif" %}" alt="SpandH">
+
+				</a>
+
+				<p>
+
+					Department of Computer Science <br>
+					The University of Sheffield <br>
+					Regent Court, 211 Portobello, Sheffield, S1 4DP <br>
+					United Kingdom <br>
+					Tel: +44 (0) 114 222 1800 | Fax: +44 (0) 114 222 1810 <br>
+
+				</p>
+				
+			</div>
+
+			<footer>
+
+				Copyright © 2015
+
+			</footer>
+
+			</div>
+		</div><!-- ./wrapper -->
+
+		<!-- {% block script %}
+			<script src="{% static "rest_framework/js/jquery-1.8.1-min.js" %}"></script>
+			<script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
+			<script src="{% static "rest_framework/js/prettify-min.js" %}"></script>
+			<script src="{% static "rest_framework/js/default.js" %}"></script>
+		{% endblock %} -->
+	</body>
+	{% endblock %}
+</html>

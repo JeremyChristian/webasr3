@@ -318,6 +318,17 @@ class Authentication(View):
 
 from django.contrib.auth import authenticate, login
 
+class Signup(View):
+    def post(self,request):
+        email = request.POST['email']
+        password = request.POST['password']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        user = CustomUser.objects.create_user(email=email,password=password,first_name=first_name,last_name=last_name)
+        user.is_staff = True
+        user.is_active = True
+        user.save()
+
 class Login(View):
     def post(self,request):
         email = request.POST['email']

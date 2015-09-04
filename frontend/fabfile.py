@@ -19,7 +19,6 @@ def process_execute(localpaths,filename,command):
 	
 	for localpath in localpaths:
 
-
 		print localpath
 		# file_start = '.*?((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])'
 		file_start = '(/[^/]*\.wav)'

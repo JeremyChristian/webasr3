@@ -22,7 +22,7 @@ class Upload(models.Model):
     language = models.CharField(max_length=50)
     systems = models.CharField(max_length=50)
     transcripts = models.FileField(upload_to='storage/transcripts',)
-    metadata = models.FileField(upload_to='storage/metadata')
+    metadata = models.FileField(upload_to='/data/webasr/server/storage/metadata')
     environment = models.CharField(max_length=50)
     status =  models.CharField(max_length=50, default='Processing...')
 

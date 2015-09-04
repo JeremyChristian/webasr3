@@ -19,7 +19,7 @@ var input = {language:"", environment:"", checkone:false, checktwo:false}
 	function populateSystems() {
 		if input.checkone {
 			if input.checktwo {
-				
+
 			}
 		}
 	}
@@ -111,6 +111,12 @@ var input = {language:"", environment:"", checkone:false, checktwo:false}
 		    <div class="col-sm-10">
 
         		<select class="form-control" name="systems" id='systemselect'>
+
+        			{% for system in systems %}
+
+            			<option value="{{system}}" >{{system}}</option>
+        			
+        			{% endfor %}
 
         		</select>
 		        

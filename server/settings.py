@@ -24,7 +24,7 @@ AUTH_USER_MODEL = 'frontend.CustomUser'
 SECRET_KEY = 'e%939oup0y0vu2yca0&%ep33!k$-_rro--_l+r%zx%c6-g%4xj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 APPEND_SLASH = True

@@ -31,7 +31,7 @@ class Upload(models.Model):
 
 class Audiofile(models.Model):
     upload = models.ForeignKey(Upload)
-    audiofile = models.FileField(upload_to='storage/audiofiles')
+    audiofile = models.FileField(upload_to='/data/webasr/server/storage/audiofiles')
     def filename(self):
         return os.path.basename(self.audiofile.name)
 

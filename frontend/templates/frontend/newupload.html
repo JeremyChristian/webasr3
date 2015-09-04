@@ -3,6 +3,7 @@
 <body>
 <script>
 var i = 1
+var input = {language:"", environment:"", checkone:false, checktwo:false}
 	function addFile() {
 		i = i + 1
 		var string = '\
@@ -14,6 +15,21 @@ var i = 1
 		</div>';
 		string = string.replace('$',i.toString())
 		document.getElementById("bah").innerHTML += string
+	}
+	function populateSystems() {
+		if input.checkone {
+			if input.checktwo {
+				
+			}
+		}
+	}
+	function addLang() {
+		input.language = (document.getElementById("language")).value;
+		input.checkone = true;
+	}
+	function addEnv() {
+		input.environment = (document.getElementById("environment")).value;
+		input.checktwo = true;
 	}
 		
 </script>
@@ -54,8 +70,10 @@ var i = 1
 
     		<div class="col-sm-10">
 
-        		<select class="form-control" name="language">
+        		<select class="form-control" name="language" oninput="addLang()" id='language'>
         
+        			<option>Please select a language</option>
+
 		            {% for language in languages %}
 
 		            	<option value="{{language}}" >{{language}}</option>
@@ -65,33 +83,14 @@ var i = 1
         		</select>
         	</div>
 		</div>
-    
-        <div class="form-group">
-    
-    	    <label class="col-sm-2 control-label ">Systems</label>
-    
-		    <div class="col-sm-10">
 
-        		<select class="form-control" name="systems">
-        		
-					{% for system in systems %}
-
-            			<option value="{{system}}" >{{system}}</option>
-        			
-        			{% endfor %}
-
-        		</select>
-		        
-		   	</div>
-		</div>
-
-        <div class="form-group">
+    	<div class="form-group">
     
         	<label class="col-sm-2 control-label ">Environment</label>
     
     		<div class="col-sm-10">
         
-        		<select class="form-control" name="environment">
+        		<select class="form-control" name="environment" oninput="addEnv()" id='environment'>
 		        
         			{% for environment in environments %}
 
@@ -103,6 +102,19 @@ var i = 1
         
     		</div>
 
+		</div>
+
+        <div class="form-group">
+    
+    	    <label class="col-sm-2 control-label ">Systems</label>
+    
+		    <div class="col-sm-10">
+
+        		<select class="form-control" name="systems" id='systemselect'>
+
+        		</select>
+		        
+		   	</div>
 		</div>
 		
 		<div class="form-group ">
@@ -127,7 +139,7 @@ var i = 1
 										
 </form>
 
-<table class="table table-hover well" style='border:20px;'>
+<table class="table table-hover well col-sm-12" style='border:20px; width:100%;'>
 
   <thead style='border:20px;'>
 

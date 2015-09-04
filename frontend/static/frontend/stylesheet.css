@@ -19,8 +19,8 @@
 }
 
 .table {
-	
-	
+	width: 100%;
+	overflow: hidden;
 	
 }
 
@@ -38,7 +38,7 @@
 }
 
 .table thead td {
-
+	overflow: hidden;
 	margin-top:5px;
 	font-size: 19px;
 	font-weight: bold;
@@ -109,6 +109,13 @@ a {
     
 }
 
+#foo {
+
+	padding-left: 30px;
+	padding-top:  15px;
+
+}
+
 p {
 
 	position: relative;
@@ -120,7 +127,7 @@ p {
 
 }
 
-img {
+#footerimg {
 	 
 	float: left;
 	padding-right: 5px;
@@ -129,10 +136,13 @@ img {
   
 }
 
+h1 {
+	color: black;
+}
+
 footer {
 
-	padding-top: 18px;
-	padding-left: 30px; 
+	 
 	color: #464646;
 	/*font-family: 'Open Sans', sans-serif;*/
   	font-size: 18px;

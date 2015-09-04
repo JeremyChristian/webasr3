@@ -16,8 +16,7 @@ def process_execute(localpaths,filename,command):
 		month = '0'+str(month)
 	year = str(datetime.now().year)
 	date = year+str(month)
-	channel = 1
-
+	
 	for localpath in localpaths:
 
 		localpath = '/Users/jeremychristian/Documents/project/server/'+localpath

@@ -22,8 +22,9 @@
 				<link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
 				<link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
 				
-				<link rel="stylesheet" href="{% static "frontend/stylesheet.css" %}">
+				
 				<link rel="stylesheet" href="{% static "nictitate/style.css" %}">
+				<link rel="stylesheet" href="{% static "frontend/stylesheet.css" %}">
 			{% endblock %}
 
 		{% endblock %}
@@ -48,11 +49,18 @@
                                 <!--logo-image-->
                                 <nav id="main-nav">
                                     <ul id="main-menu" class="clearfix sf-js-enabled sf-arrows">
-<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/account" data-description=""><i data-icon=""></i><span>Account</span></a></li>
+
 <li id="menu-item-69" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/systems" data-description=""><i data-icon=""></i><span>Systems</span></a></li>
 <li id="menu-item-70" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/users" data-description=""><i data-icon=""></i><span>Users</span></a></li>
 
+
+{% if request.user.is_authenticated %}
 <li id="menu-item-429" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/newupload" data-description=""><i data-icon=""></i><span>Uploads</span></a></li>
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/account" data-description=""><i data-icon=""></i><span>Account</span></a></li>
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/signout" data-description=""><i data-icon=""></i><span>Signout</span></a></li>
+{% else %}
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/authentication" data-description=""><i data-icon=""></i><span>Sign In</span></a></li>
+{% endif %}
 </ul><div id="mobile-menu" class="menu-menu-1-container"><span>Menu</span><ul id="toggle-view-menu">
 <li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68 clearfix"><h3><a href="/account">Account</a></h3></li>
 <li id="menu-item-69" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-69 clearfix"><h3><a href="/systems">Systems</a></h3></li>
@@ -232,13 +240,13 @@
 
 				<a href="http://www.shef.ac.uk">
 
-					<img src="{% static "frontend/UOS.gif" %}" alt="The University of Sheffield">
+					<img id='footerimg' src="{% static "frontend/UOS.gif" %}" alt="The University of Sheffield">
 
 				</a>
 
 				<a href="http://spandh.dcs.shef.ac.uk">
 
-					<img src="{% static "frontend/SPaH.gif" %}" alt="SpandH">
+					<img id='footerimg' src="{% static "frontend/SPaH.gif" %}" alt="SpandH">
 
 				</a>
 
@@ -255,9 +263,18 @@
 			</div>
 
 			<footer>
+<ul id="footer-menu" style='padding-right:30px;,'>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-27 current_page_item menu-item-65"><a href="http://127.0.0.1:8000/about">About Us</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68"><a href="http://127.0.0.1:8000/news">News</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-69"><a href="http://127.0.0.1:8000/conditions">Conditions of Use</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-70"><a href="http://127.0.0.1:8000/projects">Supporting Projects</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-71"><a href="http://127.0.0.1:8000/research">Research Software</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-429"><a href="http://127.0.0.1:8000/publications">Publications</a></li>
+</ul>
 
+<div id='foo'>
 				Copyright © 2015
-
+</div>
 			</footer>
 
 			</div>

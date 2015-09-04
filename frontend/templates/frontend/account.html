@@ -1,0 +1,20 @@
+{% extends 'rest_framework/api.html' %} 
+{% block content %}
+<table class="table table-hover well" style='border:20px;'>
+
+  <tbody>
+
+      <td>Email: {{user.email}}</td>
+      <td>Forename: {{user.first_name}}</td>
+      <td>Surname: {{user.last_name}}</td>
+      <td>Department: {{user.department}}</td>
+      <td>Address: {{user.address1}}<br>{{user.address2}}<br>{{user.postcode}}<br>{{user.city}}<br>{{user.country}}<br></td>
+      <td>Telephone: {{user.telephone}}</td>
+      <td>Fax: {{user.fax}}</td>
+      <td>Date of Birth: {{user.dob}}</td>
+
+  </tbody>
+
+</table>
+
+{% endblock %}

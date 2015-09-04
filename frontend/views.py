@@ -218,7 +218,7 @@ class CreateSystem(View):
         })
         return HttpResponse(template.render(context))
 
-class TestFileView(View):
+class UpdateUpload(View):
     def post(self,request):
         print request.POST
         print request.FILES
@@ -288,7 +288,7 @@ class CreateUpload(View):
         return HttpResponse(message)
     
     def get(self,request):
-        systems = System.objects.all()
+        systemObjects = System.objects.all()
         languages = set()
         systems = set()
         environments = set()
@@ -308,12 +308,56 @@ class CreateUpload(View):
         'systems': systems,
         'environments': environments,
         'uploads': uploads,
+        'systemObjects': systemObjects,
         })
         return HttpResponse(template.render(context))
 
-class LoginSignup(View):
+class Authentication(View):
     def get(self,request):
-        return render(request,'frontend/loginsignup.html')
+        return render(request,'frontend/authentication.html')
+
+from django.contrib.auth import authenticate, login
+
+class Login(View):
+    def post(self,request):
+        email = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(email=email,password=password)
+        if user is not None:
+            login(request,user)
+            return render(request,'frontend/loginsuccess.html')
+
+from django.contrib.auth import logout
+class Logout(View):
+    def get(self,request):
+        logout(request)
+        return render(request,'frontend/logoutsuccess.html')
+
+class Account(View):
+    def get(self,request):
+        context = RequestContext(request,{
+            'user': request.user,
+        }) 
+        return render(request,'frontend/account.html')
+
+class About(View):
+    def get(self,request):
+        return render(request,'frontend/about.html')
+class News(View):
+    def get(self,request):
+        return render(request,'frontend/news.html')
+class Conditions(View):
+    def get(self,request):
+        return render(request,'frontend/conditions.html')
+class Projects(View):
+    def get(self,request):
+        return render(request,'frontend/projects.html')
+class Research(View):
+    def get(self,request):
+        return render(request,'frontend/research.html')
+class Publications(View):
+    def get(self,request):
+        return render(request,'frontend/publications.html')
 
 
 # @api_view(['GET', 'POST'])

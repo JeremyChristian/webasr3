@@ -340,7 +340,7 @@ class Account(View):
         }) 
         return render(request,'frontend/account.html')
 
-class About(View):
+class About(View):m
     def get(self,request):
         return render(request,'frontend/about.html')
 class News(View):

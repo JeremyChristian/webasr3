@@ -323,9 +323,12 @@ class Login(View):
         email = request.POST['email']
         password = request.POST['password']
         user = authenticate(email=email,password=password)
+
         if user is not None:
             login(request,user)
             return render(request,'frontend/loginsuccess.html')
+        else:
+            return HttpResponse(email+" "+password)
 
 from django.contrib.auth import logout
 class Logout(View):

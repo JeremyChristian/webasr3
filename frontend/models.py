@@ -21,7 +21,7 @@ class Upload(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='upload', )
     language = models.CharField(max_length=50)
     systems = models.CharField(max_length=50)
-    transcripts = models.FileField(upload_to='storage/transcripts',)
+    transcripts = models.FileField(upload_to='/data/webasr/server/storage/transcripts',)
     metadata = models.FileField(upload_to='/data/webasr/server/storage/metadata')
     environment = models.CharField(max_length=50)
     status =  models.CharField(max_length=50, default='Processing...')

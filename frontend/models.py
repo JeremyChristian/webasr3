@@ -11,9 +11,6 @@ from django.utils import timezone
 import os.path
 """ UPLOAD MODEL """
 
-class TestFile(models.Model):
-    testfile = models.FileField(upload_to='storage/testfiles')
-
 
 class Upload(models.Model):
 

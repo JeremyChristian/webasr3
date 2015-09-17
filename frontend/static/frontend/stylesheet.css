@@ -21,14 +21,12 @@
 .table {
 	width: 100%;
 	overflow: hidden;
+	table-layout: fixed;
+    
 	
 }
 
-.table td {
-	white-space: nowrap;
-	overflow: hidden;
-  	text-overflow: ellipsis;
-}
+
 
 .col-md-10 {
 	height:100%;
@@ -38,10 +36,12 @@
 }
 
 .table thead td {
+	color: black;
+	font-family: 'Rokkitt', serif;
 	overflow: hidden;
 	margin-top:5px;
-	font-size: 19px;
-	font-weight: bold;
+	font-size: 27px;
+	
 }
 
 #edgy {
@@ -79,6 +79,12 @@ a {
 
 	border-radius: 0px;
 	
+}
+
+#action{
+
+	width: 10px;
+	table-layout: 
 }
 
 .btn{

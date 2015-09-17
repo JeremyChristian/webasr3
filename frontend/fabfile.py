@@ -1,3 +1,4 @@
+
 from fabric.api import *
 from django.utils import timezone
 from datetime import *
@@ -19,7 +20,7 @@ def process_execute(localpaths,filename,command):
 	
 	for localpath in localpaths:
 
-		localpath = localpath.lstrip('/Users/jeremychristian/Documents/project/server/')
+		localpath = localpath.replace('/Users/jeremychristian/Documents/project/server/','')
 
 		print localpath
 		# file_start = '.*?((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])'
@@ -43,8 +44,8 @@ def process_execute(localpaths,filename,command):
 		with cd('proc/'+filename):
 			run("echo '[Execute]' >> "+filename+'.cfg')
 			run("echo 'Priority = 0' >> "+filename+'.cfg')
-			for x in range(1,(len(localpaths)+1):
+			for x in range(1,2):
 				run("echo '"+filename+'_chn-'+(('0000'+str(x))[-5:])+"' >> "+filename+'.dal')
 				with cd('data/'):	
-					run('ln -s /share/spandh.ami1/srv/webasr/filestore/input/201507/'+filename+'.wav '+filename+'_chn-'+(('0000'+str(x))[-5:])+'.audio')
+					run('ln -s /share/spandh.ami1/srv/webasr/filestore/input/'+date+'/'+filename+'.wav '+filename+'_chn-'+(('0000'+str(x))[-5:])+'.audio')
 	run(command+' '+filename)

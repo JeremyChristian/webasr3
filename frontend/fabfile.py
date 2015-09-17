@@ -21,15 +21,15 @@ def process_execute(localpaths,filename,command):
 	for localpath in localpaths:
 
 		localpath = localpath.replace('/Users/jeremychristian/Documents/project/server/','')
+		channel = 1
+		filename_old = 'oops'
 
-		print localpath
-		# file_start = '.*?((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])'
 		file_start = '(/[^/]*\.wav)'
 		file_regex = re.compile(file_start,re.IGNORECASE|re.DOTALL)
 		file_search = file_regex.search(localpath)
 		if file_search:
 			filename_old = file_search.group(1)
-	
+		print filename_old
 		put(localpath,'/share/spandh.ami1/srv/webasr/filestore/input/'+date+'/')
 		if len(localpaths) == 1:
 			run('mv '+'/share/spandh.ami1/srv/webasr/filestore/input/'+date+filename_old+' /share/spandh.ami1/srv/webasr/filestore/input/'+date+'/'+filename+'.wav')
@@ -44,7 +44,7 @@ def process_execute(localpaths,filename,command):
 		with cd('proc/'+filename):
 			run("echo '[Execute]' >> "+filename+'.cfg')
 			run("echo 'Priority = 0' >> "+filename+'.cfg')
-			for x in range(1,2):
+			for x in range(1,(len(localpaths)+1)):
 				run("echo '"+filename+'_chn-'+(('0000'+str(x))[-5:])+"' >> "+filename+'.dal')
 				with cd('data/'):	
 					run('ln -s /share/spandh.ami1/srv/webasr/filestore/input/'+date+'/'+filename+'.wav '+filename+'_chn-'+(('0000'+str(x))[-5:])+'.audio')

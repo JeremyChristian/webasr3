@@ -162,15 +162,65 @@ def api_root(request, format = None):
 #             #     x['metaname'] = metafile_search.group(1)
 
 #         # return Response({'somedata': serializer.data},template_name='frontend/userlist.html',)
-   
-# class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-#     # permission_classes = (permissions.IsAuthenticated,)
-#     queryset = CustomUser.objects.all()
-#     def get_serializer_class(self):
-#         if self.request.user.is_staff:
-#             return AdminUserSerializer
-#         else:
-#             return AdminUserSerializer
+from django.views.generic.detail import DetailView
+class UserDetail(DetailView):
+    
+    model = CustomUser
+
+    def post(self,request,pk):
+        if not request.user.is_staff:
+            return HttpResponseRedirect('/login')
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        user = CustomUser.objects.filter(pk=pk)[0]
+        if 'is_staff' in request.POST:
+            user.is_staff = True
+            user.save()
+        else:
+            user.is_staff = False
+            user.save()
+        if 'is_active' in request.POST:
+            user.is_active = True
+            user.save()
+        else:
+            user.is_active = False
+            user.save()
+        return HttpResponseRedirect('/user/'+pk+'/')
+
+class UploadDetail(DetailView):
+    model = Upload
+     
+    def get(self,request,pk):
+
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        template = loader.get_template('frontend/upload_detail.html')
+        audiofiles = Audiofile.objects.filter(upload=self.get_object())
+        return HttpResponse(render(request,'frontend/upload_detail.html',{'audiofiles':audiofiles,'object':self.get_object()}))
+
+class SystemDetail(DetailView):
+
+    model = System
+    def get(self,request,pk):
+        if not request.user.is_staff:
+            return HttpResponseRedirect('/login')
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        print self.get_object()
+        template = loader.get_template('frontend/system_detail.html')
+        form = SystemEditForm(instance=self.get_object())
+        return HttpResponse(render(request,'frontend/system_detail.html',{'form':form,'object':self.get_object()}))
+
+    def post(self,request,pk):
+        form = SystemEditForm(instance=self.get_object(),data=request.POST)
+        
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/systems')
+        else:
+            return render(request, 'frontend/system_detail.html', {'form': form,'object':self.get_object()},)
+
+    
 
 # class UserCreate(generics.CreateAPIView):
 #     serializer_class = NewUserSerializer
@@ -184,14 +234,18 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from frontend.forms import DocumentForm
-
+# from frontend.forms import DocumentForm
+# 
 from django.http import HttpResponse
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 
 class ListUser(View):
     def get(self,request):
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        if not request.user.is_staff:
+            return HttpResponseRedirect('/login')
         users = CustomUser.objects.all()
         template = loader.get_template('frontend/listuser.html')
         context = RequestContext(request, {
@@ -199,24 +253,81 @@ class ListUser(View):
         })
         return HttpResponse(template.render(context))
 
-class CreateSystem(View):
-    def post(self,request):
+            
 
-        system = System(
-            name = request.POST.__getitem__('name'),
-            language = request.POST.__getitem__('language'),
-            environment = request.POST.__getitem__('environment'),
-            command = request.POST.__getitem__('command'),
+def download(request,pk):
+    if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+    upload = Upload.objects.filter(pk=pk)
+    response = HttpResponse(upload[0].transcripts, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename='+upload[0].created.isoformat()+'_Transcript.zip'
+    return response
+    
+
+def create_system(request):
+    if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+    if not request.user.is_staff:
+            return HttpResponseRedirect('/login')
+    if request.method == 'POST':
+        form = SystemForm(request.POST)
+        print form
+        if form.is_valid():
+            system = System(
+            name = form.cleaned_data['name'],
+            language = form.cleaned_data['language'],
+            environment = form.cleaned_data['environment'],
+            command = form.cleaned_data['command'],
             )
-        system.save()
+            system.save()
+            return HttpResponseRedirect('/systems')
+    else:
+        form = SystemForm()
 
-    def get(self,request):
-        systemlist = System.objects.all()
-        template = loader.get_template('frontend/systemlist.html')
-        context = RequestContext(request, {
-        'systemlist': systemlist,
-        })
-        return HttpResponse(template.render(context))
+    systemlist = System.objects.all()
+    context = RequestContext(request, {
+    'form': form,
+    'systemlist': systemlist,
+    })
+
+    return render(request, 'frontend/systemlist.html', context)
+
+def user_login(request):
+    if request.method == 'POST':
+        form = forms.AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            login(request,form.get_user())
+            return HttpResponseRedirect('/newupload')
+    else:
+        form = forms.AuthenticationForm()
+
+    return render(request, 'frontend/authentication.html', {'form': form})
+
+def user_edit(request):
+    if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+    if request.method == 'POST':
+        form = UserEditForm(instance=request.user,data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/account')
+        else:
+            return render(request, 'frontend/user_edit.html', {'form': form})
+    if request.method == 'GET':
+        form = UserEditForm(instance=request.user)
+        return render(request, 'frontend/user_edit.html', {'form': form})
+
+def register(request):
+
+    if request.method == 'POST':
+        form = UserCreationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/success')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'frontend/register.html', {'form': form})
 
 class UpdateUpload(View):
     def post(self,request):
@@ -239,55 +350,107 @@ class UpdateUpload(View):
                 upload.save()
                 return HttpResponse('success\n')
         return HttpResponse('failure\n')
-    def get(self,request):
-        testfiles = TestFile.objects.all()
-        context = RequestContext(request, {
-        'testfiles': testfiles,
-        })
-        template = loader.get_template('frontend/testfile.html')
-        return HttpResponse(template.render(context))
+    # def get(self,request):
+    #     testfiles = TestFile.objects.all()
+    #     context = RequestContext(request, {
+    #     'testfiles': testfiles,
+    #     })
+    #     template = loader.get_template('frontend/testfile.html')
+    #     return HttpResponse(template.render(context))
 
+import json   
+from django.core import serializers
 class CreateUpload(View):
+
     @csrf_exempt
     def post(self,request):
-        print request.POST
-        print request.FILES
-        upload = Upload(
-            user = request.user,
-            language = request.POST.__getitem__('language'),
-            environment = request.POST.__getitem__('environment'),
-            systems = request.POST.__getitem__('systems'),
-            metadata = request.FILES.__getitem__('metadata'),
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        form = UploadForm(data=request.POST)
+        if form.is_valid():
+            upload = Upload(
+                user = request.user,
+                language = form.cleaned_data['language'],
+                environment = form.cleaned_data['environment'],
+                systems = form.cleaned_data['systems'],
             )
-        upload.save()
 
+            if form.cleaned_data['metadata']:
+                upload.metadata = form.cleaned_data['metadata']
 
-        localpaths = []
-        for x in range(1,len(request.FILES)):
-            print x
-            audioupload = Audiofile(audiofile = request.FILES.__getitem__('file'+str(x)), upload = upload)
-            audioupload.save()
-            localpaths.append(audioupload.audiofile.url)
+            upload.save()
 
+            localpaths = []
 
-        message = Audiofile.objects.all()
-        user = request.user
-        system = upload.systems
+            print request.FILES
+
+            for x in range(1,(len(request.FILES)+1)):
+                try:
+                    audioupload = Audiofile(audiofile = request.FILES.__getitem__('file'+str(x)), upload = upload)
+                    audioupload.save()
+                    localpaths.append(audioupload.audiofile.url)
+                except:
+                    pass
+
+            message = Audiofile.objects.all()
+            user = request.user
+            system = upload.systems
+            
+            pk = str(CustomUser.objects.get(email=user).id)
+            n = 5 - len(pk)
+            pk =  ('0' * n) + pk
+
+            command = System.objects.get(name=system).command
+           
+            timestamp = ''.join(i for i in upload.created.isoformat() if i.isdigit())
+            filename = 'src-'+pk+'_ses-'+timestamp
+
+            fabfile.process_execute(localpaths,filename,command)
+            
+            return HttpResponseRedirect('/newupload')
+
+        else:
+            systemObjects = System.objects.all()
+            languages = set()
+            systems = set()
+            environments = set()
+            for system in System.objects.all():
+                languages.add(system.language)
+                systems.add(system.name)
+                environments.add(system.environment)
+            uploadlist = Upload.objects.filter(user=request.user)
+            uploads = []
+            for upload in uploadlist:
+                files = []
+                for audiofile in Audiofile.objects.filter(upload = upload):
+                    file_start = '(/[^/]*\.wav)'
+                    file_regex = re.compile(file_start,re.IGNORECASE|re.DOTALL)
+                    file_search = file_regex.search(audiofile.audiofile.url)
+                    if file_search:
+                        files.append(file_search.group(1))
+                uploads.append((upload,files))
+            template = loader.get_template('frontend/newupload.html')
+            context = RequestContext(request, {
+            'languages': languages,
+            'systems': systems,
+            'environments': environments,
+            'uploads': list(reversed(uploads)),
+            'systemObjects': systemObjects,
+            'form':form,
+            })
+            return render(request, 'frontend/newupload.html', context)
+
         
-        pk = str(CustomUser.objects.get(email=user).id)
-        n = 5 - len(pk)
-        pk =  ('0' * n) + pk
 
-        command = System.objects.get(name=system).command
-       
-        timestamp = ''.join(i for i in upload.created.isoformat() if i.isdigit())
-        filename = 'src-'+pk+'_ses-'+timestamp
 
-        fabfile.process_execute(localpaths,filename,command)
+        
 
         return HttpResponse(message)
     
     def get(self,request):
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        form = UploadForm()
         systemObjects = System.objects.all()
         languages = set()
         systems = set()
@@ -299,60 +462,52 @@ class CreateUpload(View):
         uploadlist = Upload.objects.filter(user=request.user)
         uploads = []
         for upload in uploadlist:
-            uploads.append((upload,Audiofile.objects.filter(upload = upload)))
-        
-
+            files = []
+            for audiofile in Audiofile.objects.filter(upload = upload):
+                file_start = '(/[^/]*\.wav)'
+                file_regex = re.compile(file_start,re.IGNORECASE|re.DOTALL)
+                file_search = file_regex.search(audiofile.audiofile.url)
+                if file_search:
+                    files.append(file_search.group(1))
+            uploads.append((upload,files))
         template = loader.get_template('frontend/newupload.html')
         context = RequestContext(request, {
         'languages': languages,
         'systems': systems,
         'environments': environments,
-        'uploads': uploads,
+        'uploads': list(reversed(uploads)),
         'systemObjects': systemObjects,
+        'form':form,
         })
         return HttpResponse(template.render(context))
 
 class Authentication(View):
     def get(self,request):
-        return render(request,'frontend/authentication.html')
+        return HttpResponseRedirect('/login')
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, forms
 
-class Signup(View):
-    def post(self,request):
-        email = request.POST['email']
-        password = request.POST['password']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        user = CustomUser.objects.create_user(email=email,password=password,first_name=first_name,last_name=last_name)
-        user.is_staff = True
-        user.is_active = True
-        user.save()
 
-class Login(View):
-    def post(self,request):
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(email=email,password=password)
 
-        if user is not None:
-            login(request,user)
-            return render(request,'frontend/loginsuccess.html')
-        else:
-            return HttpResponse(email+" "+password)
 
 from django.contrib.auth import logout
 class Logout(View):
     def get(self,request):
         logout(request)
-        return render(request,'frontend/logoutsuccess.html')
+        return HttpResponseRedirect('/login')
 
 class Account(View):
     def get(self,request):
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
         context = RequestContext(request,{
             'user': request.user,
         }) 
         return render(request,'frontend/account.html')
+
+class RegistrationSuccess(View):
+    def get(self,request):
+        return render(request,'frontend/registration_success.html')
 
 class About(View):
     def get(self,request):

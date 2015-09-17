@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
             name='Audiofile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('audiofile', models.FileField(upload_to=b'storage/audiofiles')),
+                ('audiofile', models.FileField(upload_to=b'/Users/jeremychristian/Documents/project/server/storage/audiofiles')),
             ],
         ),
         migrations.CreateModel(
@@ -70,8 +70,8 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('language', models.CharField(max_length=50)),
                 ('systems', models.CharField(max_length=50)),
-                ('transcripts', models.FileField(upload_to=b'storage/transcripts')),
-                ('metadata', models.FileField(upload_to=b'storage/metadata')),
+                ('transcripts', models.FileField(upload_to=b'/Users/jeremychristian/Documents/project/server/storage/transcripts')),
+                ('metadata', models.FileField(upload_to=b'/Users/jeremychristian/Documents/project/server/storage/metadata')),
                 ('environment', models.CharField(max_length=50)),
                 ('status', models.CharField(default=b'Processing...', max_length=50)),
                 ('user', models.ForeignKey(related_name='upload', to=settings.AUTH_USER_MODEL)),

@@ -18,10 +18,12 @@ def process_execute(localpaths,filename,command):
 	year = str(datetime.now().year)
 	date = year+str(month)
 	
+        channel = 1
+
 	for localpath in localpaths:
 
 		localpath = localpath.replace('/Users/jeremychristian/Documents/project/server/','')
-		channel = 1
+		
 		filename_old = 'oops'
 
 		file_start = '(/[^/]*\.wav)'
@@ -44,8 +46,14 @@ def process_execute(localpaths,filename,command):
 		with cd('proc/'+filename):
 			run("echo '[Execute]' >> "+filename+'.cfg')
 			run("echo 'Priority = 0' >> "+filename+'.cfg')
-			for x in range(1,(len(localpaths)+1)):
+			if len(localpaths) == 1:
+			    for x in range(1,(len(localpaths)+1)):
+                                run("echo '"+filename+'_chn-'+(('0000'+str(x))[-5:])+"' >> "+filename+'.dal')
+                                with cd('data/'):
+                                        run('ln -s /share/spandh.ami1/srv/webasr/filestore/input/'+date+'/'+filename+'.wav '+filename+'_chn-'+(('0000'+str(x))[-5:])+'.audio')
+			else:
+                            for x in range(1,(len(localpaths)+1)):
 				run("echo '"+filename+'_chn-'+(('0000'+str(x))[-5:])+"' >> "+filename+'.dal')
 				with cd('data/'):	
-					run('ln -s /share/spandh.ami1/srv/webasr/filestore/input/'+date+'/'+filename+'.wav '+filename+'_chn-'+(('0000'+str(x))[-5:])+'.audio')
+					run('ln -s /share/spandh.ami1/srv/webasr/filestore/input/'+date+'/'+filename+'_chn-'+(('0000'+str(x))[-5:])+'.wav '+filename+'_chn-'+(('0000'+str(x))[-5:])+'.audio')
 	run(command+' '+filename)

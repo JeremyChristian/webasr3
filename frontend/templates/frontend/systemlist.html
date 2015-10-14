@@ -42,6 +42,7 @@
       <th style='width:10%'>Environment</th>
       <th style='width:50%'>Command</th>
       <th style='width:10%'>View</th>
+      <th style='width:10%'>Delete</th>
     </tr>
 
   </thead>
@@ -58,6 +59,7 @@
       <td style="width: 25%">{{system.environment}}</td>
       <td style="width: 25%">{{system.command}}</td>
       <td ><a href="system/{{system.pk}}">view</a></td>
+      <td ><a href="system_delete/{{system.pk}}">delete</a></td>
     </tr>
 
   {% endfor %} 

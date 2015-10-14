@@ -18,17 +18,28 @@ class Upload(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='upload', )
     language = models.CharField(max_length=50)
     systems = models.CharField(max_length=50)
-    transcripts = models.FileField(upload_to='/Users/jeremychristian/Documents/project/server/storage/transcripts',)
-    metadata = models.FileField(upload_to='/Users/jeremychristian/Documents/project/server/storage/metadata')
+    transcripts = models.FileField(upload_to='/data/webasr/server/storage/transcripts',)
+    metadata = models.FileField(upload_to='/data/webasr/server/storage/metadata')
     environment = models.CharField(max_length=50)
     status =  models.CharField(max_length=50, default='Processing...')
 
     class meta:
     	ordering = ('created')
 
+class Process(models.Model):
+    
+    created = models.DateTimeField(auto_now_add=True)
+    upload = models.ForeignKey(Upload)
+    source = models.CharField(max_length=50)
+    session = models.CharField(max_length=50)
+
+class ProcessId(models.Model):
+    process = models.ForeignKey(Process)
+    processid = models.IntegerField()
+
 class Audiofile(models.Model):
     upload = models.ForeignKey(Upload)
-    audiofile = models.FileField(upload_to='/Users/jeremychristian/Documents/project/server/storage/audiofiles')
+    audiofile = models.FileField(upload_to='/data/webasr/server/storage/audiofiles')
     def filename(self):
         return os.path.basename(self.audiofile.name)
 

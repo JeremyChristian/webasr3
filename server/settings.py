@@ -26,7 +26,7 @@ SECRET_KEY = 'e%939oup0y0vu2yca0&%ep33!k$-_rro--_l+r%zx%c6-g%4xj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 APPEND_SLASH = True
 
 # Application definition
@@ -90,6 +90,12 @@ DATABASES = {
     }
 }
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'webasr2@gmail.com'
+EMAIL_HOST_PASSWORD = 'asr4daweb'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -107,5 +113,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
+STATIC_ROOT = '/server/frontend/static'
 STATIC_URL = '/static/'

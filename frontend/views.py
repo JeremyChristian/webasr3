@@ -162,7 +162,12 @@ def api_root(request, format = None):
 #             #     x['metaname'] = metafile_search.group(1)
 
 #         # return Response({'somedata': serializer.data},template_name='frontend/userlist.html',)
+
+from django.core.mail import send_mail
 from django.views.generic.detail import DetailView
+registration_message = 'This is an email to confirm your WebASR account has been successfully registered. Our admin staff will notify you shortly once your details have been verified.'
+confirmation_message = 'Your webasr account has now been activated, go to www.webasr.org to sign in.'
+
 class UserDetail(DetailView):
     
     model = CustomUser
@@ -180,6 +185,9 @@ class UserDetail(DetailView):
             user.is_staff = False
             user.save()
         if 'is_active' in request.POST:
+            if user.is_active == False:
+                send_mail('Welcome to WebASR', confirmation_message, 'registration@webasr.com',[user.email], fail_silently=False)
+
             user.is_active = True
             user.save()
         else:
@@ -220,12 +228,10 @@ class SystemDetail(DetailView):
         else:
             return render(request, 'frontend/system_detail.html', {'form': form,'object':self.get_object()},)
 
-    
 
-# class UserCreate(generics.CreateAPIView):
-#     serializer_class = NewUserSerializer
-#     def perform_create(self, serializer):
-#         serializer.save()
+def system_delete(request,pk):
+    System.objects.get(pk=pk).delete()
+    return HttpResponseRedirect('/systems')
 
 from django.shortcuts import render
 
@@ -253,7 +259,19 @@ class ListUser(View):
         })
         return HttpResponse(template.render(context))
 
-            
+class ListProcess(View):
+    def get(self,request):
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login')
+        if not request.user.is_staff:
+            return HttpResponseRedirect('/login')
+
+        processes = Process.objects.all()
+        template = loader.get_template('frontend/processes.html')
+        context = RequestContext(request, {
+        'processes': processes,
+        })
+        return HttpResponse(template.render(context))            
 
 def download(request,pk):
     if not request.user.is_authenticated():
@@ -263,6 +281,21 @@ def download(request,pk):
     response['Content-Disposition'] = 'attachment; filename='+upload[0].created.isoformat()+'_Transcript.zip'
     return response
     
+def process_delete(pk):
+    process = Process.objects.get(pk=pk)
+    process_ids = ProcessId.objects.filter(process=process)
+    for process_id in process_ids:
+        process_id.delete()
+    process.delete()
+
+def process_delete_view(request,pk):
+    
+    process = Process.objects.get(pk=pk)
+    upload = process.upload
+    upload.status = 'Aborted'
+    upload.save()
+    process_delete(pk)
+    return HttpResponseRedirect('/processes')
 
 def create_system(request):
     if not request.user.is_authenticated():
@@ -323,6 +356,13 @@ def register(request):
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             form.save()
+            email = [form.instance.email]
+            send_mail('Welcome to WebASR', registration_message, 'registration@webasr.com',email, fail_silently=False)
+
+            admins = CustomUser.objects.filter(is_staff=True)
+            emails = [o.email for o in admins]
+            admin_message = 'New User: '+email[0]+' has registered.'
+            send_mail('New User Registered', admin_message, 'registration@webasr.com', emails, fail_silently=False)
             return HttpResponseRedirect('/success')
     else:
         form = UserCreationForm()
@@ -331,11 +371,9 @@ def register(request):
 
 class UpdateUpload(View):
     def post(self,request):
-        print request.POST
-        print request.FILES
         transcript = request.FILES.__getitem__('upload')
         userpk = request.POST.__getitem__('source').lstrip('0')
-        
+        status = request.POST.__getitem__('status')        
         session = request.POST.__getitem__('session')
         user = CustomUser.objects.filter(pk=userpk)
         
@@ -347,7 +385,10 @@ class UpdateUpload(View):
             print session
             if timestamp == session:
                 upload.transcripts = transcript
+		upload.status = status
                 upload.save()
+		process = Process.objects.get(upload=upload)
+                process_delete(process.pk)
                 return HttpResponse('success\n')
         return HttpResponse('failure\n')
     # def get(self,request):
@@ -364,34 +405,44 @@ class CreateUpload(View):
 
     @csrf_exempt
     def post(self,request):
+        
+        form = UploadForm(data=request.POST)
+        
         if not request.user.is_authenticated():
             return HttpResponseRedirect('/login')
-        form = UploadForm(data=request.POST)
-        if form.is_valid():
+        
+        if not request.FILES:
+	    return HttpResponseRedirect('/newupload')
+	    
+        if not 'file1' in request.FILES:
+	    return HttpResponseRedirect('/newupload')
+               
+        
+        elif form.is_valid():
             upload = Upload(
                 user = request.user,
                 language = form.cleaned_data['language'],
                 environment = form.cleaned_data['environment'],
                 systems = form.cleaned_data['systems'],
             )
-
+            
             if form.cleaned_data['metadata']:
                 upload.metadata = form.cleaned_data['metadata']
 
             upload.save()
-
+            
             localpaths = []
 
-            print request.FILES
+            
 
             for x in range(1,(len(request.FILES)+1)):
-                try:
-                    audioupload = Audiofile(audiofile = request.FILES.__getitem__('file'+str(x)), upload = upload)
-                    audioupload.save()
-                    localpaths.append(audioupload.audiofile.url)
-                except:
-                    pass
-
+                
+                audioupload = Audiofile(audiofile = request.FILES.__getitem__('file'+str(x)), upload = upload)
+                audioupload.save()
+                localpaths.append(audioupload.audiofile.url)
+            
+                   
+            
             message = Audiofile.objects.all()
             user = request.user
             system = upload.systems
@@ -406,7 +457,8 @@ class CreateUpload(View):
             filename = 'src-'+pk+'_ses-'+timestamp
 
             fabfile.process_execute(localpaths,filename,command)
-            
+            process = Process(source=pk,session=timestamp,upload=upload)
+            process.save()
             return HttpResponseRedirect('/newupload')
 
         else:
@@ -440,12 +492,7 @@ class CreateUpload(View):
             })
             return render(request, 'frontend/newupload.html', context)
 
-        
-
-
-        
-
-        return HttpResponse(message)
+     
     
     def get(self,request):
         if not request.user.is_authenticated():

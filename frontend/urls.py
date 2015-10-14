@@ -5,10 +5,13 @@ from django.conf.urls import include
 from django.conf.urls import patterns, url
 
 urlpatterns = format_suffix_patterns([
-	url(r'^$', views.api_root),
+	url(r'^$', views.user_login),
      url(r'^success$',
         views.RegistrationSuccess.as_view(),
         name='success'),
+    url(r'^system_delete/(?P<pk>[0-9]+)/$',
+        views.system_delete,
+        name='system_delete'),
     url(r'^upload/(?P<pk>[0-9]+)/$',
         views.UploadDetail.as_view(),
         name='upload'),
@@ -30,6 +33,12 @@ urlpatterns = format_suffix_patterns([
     url(r'^user/(?P<pk>[0-9]+)/$',
         views.UserDetail.as_view(),
         name='user'),
+    url(r'^process/(?P<pk>[0-9]+)/$',
+        views.process_delete_view,
+        name='process'),
+    url(r'^processes', 
+        views.ListProcess.as_view(),
+        name='processes'),
   #   url(r'^api-auth/', 
   #   	include('rest_framework.urls',
 		# namespace='rest_framework')),

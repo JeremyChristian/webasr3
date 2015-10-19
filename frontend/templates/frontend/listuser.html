@@ -1,0 +1,47 @@
+{% extends 'rest_framework/api.html' %} 
+{% block content %}
+<div align='center' style='margin:20px;'>                          
+<table class="table table-hover" style='width:100%;'>
+
+  <thead>
+
+    <tr>
+
+      <td>Email</td>
+      <td>Forename</td>
+      <td>Surname</td>
+      <td>Active</td>
+      <td>Staff</td>
+
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+  {% for user in users %}
+
+    <tr  {%if user.is_active == False%}
+      class="warning"
+      {%elif user.is_staff == True%}
+      class='info'
+      {%endif%}
+    >
+
+      <td>{{user.email}}</td>
+      <td>{{user.first_name}}</td>
+      <td>{{user.last_name}}</td>
+      <td>{{user.is_active}}</td>
+      <td>{{user.is_staff}}</td>
+      <td><a href="user/{{user.pk}}">view</a></td>
+    </tr>
+
+  {% endfor %} 
+
+  </tbody>
+
+</table></div>
+
+
+
+{% endblock %}
